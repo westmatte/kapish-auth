@@ -22,7 +22,7 @@ namespace client
             
             var azureServiceTokenProvider = new AzureServiceTokenProvider();
             string apiToken = await azureServiceTokenProvider.GetAccessTokenAsync("https://kapish-api.azurewebsites.net");
-            Console.WriteLine(apiToken);
+            log.LogInformation(apiToken);
 
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiToken);
@@ -30,7 +30,7 @@ namespace client
 
             response.EnsureSuccessStatusCode();
 
-            Console.WriteLine(await response.Content.ReadAsStringAsync());
+            log.LogInformation(await response.Content.ReadAsStringAsync());
         }
     }
 }

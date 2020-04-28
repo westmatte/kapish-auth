@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -9,13 +10,15 @@ namespace api
 {
     public static class DBConnect
     {
-        public static async Task<SqlConnection> GetConnectionAsync(string connectionString)
+        public static async Task<SqlConnection> GetConnectionAsync(ILogger log)
         {
+            string connectionString = Environment.GetEnvironmentVariable("DBConnectionString");
             ValidateConnectionString(connectionString);
 
             var resource = "https://database.windows.net/";
             var azureServiceTokenProvider = new AzureServiceTokenProvider();
             var accessToken = await azureServiceTokenProvider.GetAccessTokenAsync(resource);
+            log.LogInformation(accessToken);
 
             var connection = new SqlConnection()
             {

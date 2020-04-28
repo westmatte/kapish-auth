@@ -19,7 +19,7 @@ namespace api
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            var sqlClient = await DBConnect.GetConnectionAsync(Environment.GetEnvironmentVariable("DBConnectionString"));
+            var sqlClient = await DBConnect.GetConnectionAsync(log);
             var result = await sqlClient.QueryAsync<object>("select * from SalesLT.SalesOrderDetail");
 
             if (result.Any())
