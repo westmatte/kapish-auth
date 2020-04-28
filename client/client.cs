@@ -15,24 +15,22 @@ namespace client
 {
     public static class client
     {
-        [FunctionName("client")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
-            ILogger log)
+        [FunctionName("timerClient")]
+        public static async Task RunTimer([TimerTrigger("0 0 5 * * *")]TimerInfo myTimer, ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
-
+            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            
             var azureServiceTokenProvider = new AzureServiceTokenProvider();
             string apiToken = await azureServiceTokenProvider.GetAccessTokenAsync("https://kapish-api.azurewebsites.net");
-            log.LogInformation(apiToken);
+            Console.WriteLine(apiToken);
 
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiToken);
-            var response = await httpClient.GetAsync(new Uri("https://kapish-api.azurewebsites.net/api/api"));
+            var response = await httpClient.GetAsync(new Uri("https://kapish-api.azurewebsites.net/api/getSalesOrderDetails"));
 
             response.EnsureSuccessStatusCode();
 
-            return new OkObjectResult(await response.Content.ReadAsStringAsync());
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
         }
     }
 }
