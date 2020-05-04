@@ -20,13 +20,16 @@ namespace client
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             
+            //if system-assigned managed identity.
             var azureServiceTokenProvider = new AzureServiceTokenProvider();
-            string apiToken = await azureServiceTokenProvider.GetAccessTokenAsync("https://kapish-api.azurewebsites.net");
+            //if user-assigned managed identity.
+            //var azureServiceTokenProvider = new AzureServiceTokenProvider("RunAs=App;AppId=<clientId of user assigned managed identity>");
+            string apiToken = await azureServiceTokenProvider.GetAccessTokenAsync("https://kapish-api-demo.azurewebsites.net");
             log.LogInformation(apiToken);
 
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiToken);
-            var response = await httpClient.GetAsync(new Uri("https://kapish-api.azurewebsites.net/api/getSalesOrderDetails"));
+            var response = await httpClient.GetAsync(new Uri("https://kapish-api-demo.azurewebsites.net/api/getSalesOrderDetails"));
 
             response.EnsureSuccessStatusCode();
 
